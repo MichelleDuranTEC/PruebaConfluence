@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Gráficos</title>
+    <!-- Cargar Chart.js desde un CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Generador de Gráficos - Datos de CSV</h1>
+
+    <!-- Formulario para cargar el archivo CSV -->
+    <input type="file" id="file-input" accept=".csv">
+    <br><br>
+
+    <!-- Área para mostrar el gráfico -->
+    <canvas id="myChart" width="400" height="200"></canvas>
+
+    <script>
+        // Función para procesar el archivo CSV
+        document.getElementById('file-input').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+
+            // Cuando el archivo se haya leído, procesamos los datos
+            reader.onload = function(e) {
+                const text = e.target.result;
+                const rows = text.split('\n').map(row => row.split(','));
+                
+                // Extraemos las etiquetas (X) y los datos (Y)
+                const labels = rows.slice(1).map(row => row[0]); // Tomamos la primera columna como etiquetas (X)
+                const data = rows.slice(1).map(row => row[1]);   // Tomamos la segunda columna como datos (Y)
+
+                // Crear el gráfico con los datos obtenidos
+                const ctx = document.getElementById('myChart').getContext('2d');
+                const chart = new Chart(ctx, {
+                    type: 'line', // Tipo de gráfico: línea
+                    data: {
+                        labels: labels, // Etiquetas en el eje X
+                        datasets: [{
+                            label: 'Datos Y', // Título de la serie de datos
+                            data: data, // Los valores de Y
+                            fill: false, // No rellena el área bajo la curva
+                            borderColor: 'rgb(75, 192, 192)', // Color de la línea
+                            tension: 0.1 // Curvatura de la línea
+                        }]
+                    }
+                });
+            };
+
+            // Leer el archivo como texto
+            reader.readAsText(file);
+        });
+    </script>
+</body>
+</html>
